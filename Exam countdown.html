@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Countdown & Study Planner</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #6b8cae;
+            --accent-color: #ff7e5f;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        .app-description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--secondary-color);
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .time-inputs {
+            display: flex;
+            gap: 15px;
+        }
+
+        .time-input {
+            flex: 1;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .output-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .plan-title {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+
+        .countdown {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .flowchart {
+            margin-top: 20px;
+        }
+
+        .topic {
+            background-color: var(--light-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .topic-name {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .topic-time {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .subtopics {
+            margin-left: 20px;
+        }
+
+        .subtopic {
+            background-color: white;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .subtopic-name {
+            color: var(--dark-color);
+        }
+
+        .subtopic-time {
+            color: var(--secondary-color);
+            font-size: 13px;
+        }
+
+        .previous-plans {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .plan-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .plan-card-info {
+            flex: 1;
+        }
+
+        .plan-card-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .plan-card-date {
+            color: var(--secondary-color);
+            font-size: 14px;
+        }
+
+        .plan-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .time-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .plan-header, .topic-header, .subtopic {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .plan-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .plan-card-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Exam Countdown & Study Planner</h1>
+        <p class="app-description">Plan your study schedule effectively and track your exam preparation progress</p>
+        
+        <div class="form-container">
+            <div class="form-group">
+                <label for="exam-name">Exam Name</label>
+                <input type="text" id="exam-name" placeholder="e.g., Final Mathematics Exam">
+            </div>
+            
+            <div class="form-group">
+                <label for="exam-date">Exam Date</label>
+                <input type="date" id="exam-date">
+            </div>
+            
+            <div class="form-group">
+                <label for="study-topics">Study Topics (comma separated)</label>
+                <textarea id="study-topics" placeholder="e.g., Algebra, Geometry, Calculus"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="subtopics">Sub-topics (comma separated for each topic, semicolon between topics)</label>
+                <textarea id="subtopics" placeholder="e.g., Linear equations,Quadratic equations; Angles,Triangles; Derivatives,Integrals"></textarea>
+                <small>Enter sub-topics for each topic in order, separated by commas. Use semicolon (;) to separate between topics.</small>
+            </div>
+            
+            <div class="form-group">
+                <label>Study Time Allocation</label>
+                <div class="time-inputs">
+                    <div class="time-input">
+                        <label for="topic-hours">Hours per Topic</label>
+                        <input type="number" id="topic-hours" min="0" value="2">
+                    </div>
+                    <div class="time-input">
+                        <label for="topic-minutes">Minutes per Topic</label>
+                        <input type="number" id="topic-minutes" min="0" max="59" value="30">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Sub-topic Time Allocation</label>
+                <div class="time-inputs">
+                    <div class="time-input">
+                        <label for="subtopic-hours">Hours per Sub-topic</label>
+                        <input type="number" id="subtopic-hours" min="0" value="0">
+                    </div>
+                    <div class="time-input">
+                        <label for="subtopic-minutes">Minutes per Sub-topic</label>
+                        <input type="number" id="subtopic-minutes" min="0" max="59" value="45">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="add-exam">Add Exam Plan</button>
+                <button id="show-plans" class="btn-secondary">Show Previous Plans</button>
+            </div>
+        </div>
+        
+        <div class="output-container" id="current-plan">
+            <div class="plan-header">
+                <h2 class="plan-title" id="output-exam-name"></h2>
+                <div class="countdown" id="countdown"></div>
+            </div>
+            <div class="flowchart" id="flowchart"></div>
+        </div>
+        
+        <div class="previous-plans" id="previous-plans">
+            <h2>Your Study Plans</h2>
+            <div id="plans-list"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addExamBtn = document.getElementById('add-exam');
+            const showPlansBtn = document.getElementById('show-plans');
+            const currentPlanContainer = document.getElementById('current-plan');
+            const previousPlansContainer = document.getElementById('previous-plans');
+            const plansList = document.getElementById('plans-list');
+            const examNameInput = document.getElementById('exam-name');
+            const examDateInput = document.getElementById('exam-date');
+            const studyTopicsInput = document.getElementById('study-topics');
+            const subtopicsInput = document.getElementById('subtopics');
+            const topicHoursInput = document.getElementById('topic-hours');
+            const topicMinutesInput = document.getElementById('topic-minutes');
+            const subtopicHoursInput = document.getElementById('subtopic-hours');
+            const subtopicMinutesInput = document.getElementById('subtopic-minutes');
+            const outputExamName = document.getElementById('output-exam-name');
+            const countdownElement = document.getElementById('countdown');
+            const flowchartElement = document.getElementById('flowchart');
+            const today = new Date().toISOString().split('T')[0];
+            examDateInput.setAttribute('min', today);
+            let studyPlans = JSON.parse(localStorage.getItem('studyPlans')) || [];
+            addExamBtn.addEventListener('click', addExamPlan);
+            showPlansBtn.addEventListener('click', togglePreviousPlans);
+            function addExamPlan() {
+                if (!examNameInput.value || !examDateInput.value || !studyTopicsInput.value) {
+                    alert('Please fill in all required fields: Exam Name, Exam Date, and Study Topics');
+                    return;
+                }
+                const topics = studyTopicsInput.value.split(',').map(topic => topic.trim());
+                const subtopicsText = subtopicsInput.value;
+                let subtopics = [];
+                if (subtopicsText) {
+                    subtopics = subtopicsText.split(';').map(group => 
+                        group.split(',').map(item => item.trim())
+                        .filter(group => group.length > 0 && group[0] !== '')
+                    );
+                }
+                while (subtopics.length < topics.length) {
+                    subtopics.push([]);
+                }
+                const topicTime = {
+                    hours: parseInt(topicHoursInput.value) || 0,
+                    minutes: parseInt(topicMinutesInput.value) || 0
+                };
+                
+                const subtopicTime = {
+                    hours: parseInt(subtopicHoursInput.value) || 0,
+                    minutes: parseInt(subtopicMinutesInput.value) || 0
+                };
+                const studyPlan = {
+                    id: Date.now().toString(),
+                    examName: examNameInput.value,
+                    examDate: examDateInput.value,
+                    topics: topics,
+                    subtopics: subtopics,
+                    topicTime: topicTime,
+                    subtopicTime: subtopicTime,
+                    createdAt: new Date().toISOString()
+                };
+                studyPlans.unshift(studyPlan);
+                localStorage.setItem('studyPlans', JSON.stringify(studyPlans));
+                displayStudyPlan(studyPlan);
+                currentPlanContainer.style.display = 'block';
+                previousPlansContainer.style.display = 'none';
+                resetForm();
+            }
+            function displayStudyPlan(plan) {
+                outputExamName.textContent = plan.examName;
+                updateCountdown(plan.examDate);
+                const countdownInterval = setInterval(() => {
+                    updateCountdown(plan.examDate);
+                }, 1000);
+                flowchartElement.innerHTML = '';
+                plan.topics.forEach((topic, index) => {
+                    const topicElement = document.createElement('div');
+                    topicElement.className = 'topic';
+                    
+                    const topicHeader = document.createElement('div');
+                    topicHeader.className = 'topic-header';
+                    
+                    const topicName = document.createElement('div');
+                    topicName.className = 'topic-name';
+                    topicName.textContent = topic;
+                    
+                    const topicTime = document.createElement('div');
+                    topicTime.className = 'topic-time';
+                    topicTime.textContent = formatTime(plan.topicTime.hours, plan.topicTime.minutes);
+                    
+                    topicHeader.appendChild(topicName);
+                    topicHeader.appendChild(topicTime);
+                    topicElement.appendChild(topicHeader);
+                    if (plan.subtopics[index] && plan.subtopics[index].length > 0) {
+                        const subtopicsContainer = document.createElement('div');
+                        subtopicsContainer.className = 'subtopics';
+                        
+                        plan.subtopics[index].forEach(subtopic => {
+                            const subtopicElement = document.createElement('div');
+                            subtopicElement.className = 'subtopic';
+                            
+                            const subtopicName = document.createElement('div');
+                            subtopicName.className = 'subtopic-name';
+                            subtopicName.textContent = subtopic;
+                            
+                            const subtopicTime = document.createElement('div');
+                            subtopicTime.className = 'subtopic-time';
+                            subtopicTime.textContent = formatTime(plan.subtopicTime.hours, plan.subtopicTime.minutes);
+                            
+                            subtopicElement.appendChild(subtopicName);
+                            subtopicElement.appendChild(subtopicTime);
+                            subtopicsContainer.appendChild(subtopicElement);
+                        });
+                        
+                        topicElement.appendChild(subtopicsContainer);
+                    }
+                    
+                    flowchartElement.appendChild(topicElement);
+                });
+                plan.countdownInterval = countdownInterval;
+            }
+            function updateCountdown(examDate) {
+                const now = new Date();
+                const examDay = new Date(examDate);
+                const timeDiff = examDay - now;
+                
+                if (timeDiff <= 0) {
+                    countdownElement.textContent = 'Exam is today!';
+                    return;
+                }
+                
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                
+                countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+            }
+            function formatTime(hours, minutes) {
+                let timeStr = '';
+                if (hours > 0) {
+                    timeStr += `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+                }
+                if (minutes > 0) {
+                    if (timeStr) timeStr += ' ';
+                    timeStr += `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+                }
+                return timeStr || '0 minutes';
+            }
+            function togglePreviousPlans() {
+                if (previousPlansContainer.style.display === 'block') {
+                    previousPlansContainer.style.display = 'none';
+                    showPlansBtn.textContent = 'Show Previous Plans';
+                } else {
+                    displayPreviousPlans();
+                    previousPlansContainer.style.display = 'block';
+                    currentPlanContainer.style.display = 'none';
+                    showPlansBtn.textContent = 'Hide Previous Plans';
+                }
+            }
+            function displayPreviousPlans() {
+                plansList.innerHTML = '';
+                
+                if (studyPlans.length === 0) {
+                    plansList.innerHTML = '<div class="empty-state">No study plans found. Create your first plan above!</div>';
+                    return;
+                }
+                
+                studyPlans.forEach(plan => {
+                    const planCard = document.createElement('div');
+                    planCard.className = 'plan-card';
+                    
+                    const planInfo = document.createElement('div');
+                    planInfo.className = 'plan-card-info';
+                    
+                    const planName = document.createElement('div');
+                    planName.className = 'plan-card-name';
+                    planName.textContent = plan.examName;
+                    
+                    const planDate = document.createElement('div');
+                    planDate.className = 'plan-card-date';
+                    planDate.textContent = `Exam Date: ${formatDate(plan.examDate)} | Created: ${formatDate(plan.createdAt)}`;
+                    
+                    planInfo.appendChild(planName);
+                    planInfo.appendChild(planDate);
+                    
+                    const planActions = document.createElement('div');
+                    planActions.className = 'plan-card-actions';
+                    
+                    const viewBtn = document.createElement('button');
+                    viewBtn.textContent = 'View';
+                    viewBtn.addEventListener('click', () => {
+                        displayStudyPlan(plan);
+                        currentPlanContainer.style.display = 'block';
+                        previousPlansContainer.style.display = 'none';
+                        showPlansBtn.textContent = 'Show Previous Plans';
+                    });
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.className = 'btn-danger';
+                    deleteBtn.addEventListener('click', () => deletePlan(plan.id));
+                    
+                    planActions.appendChild(viewBtn);
+                    planActions.appendChild(deleteBtn);
+                    
+                    planCard.appendChild(planInfo);
+                    planCard.appendChild(planActions);
+                    
+                    plansList.appendChild(planCard);
+                });
+            }
+            function deletePlan(planId) {
+                if (confirm('Are you sure you want to delete this study plan?')) {
+                    studyPlans = studyPlans.filter(plan => plan.id !== planId);
+                    localStorage.setItem('studyPlans', JSON.stringify(studyPlans));
+                    displayPreviousPlans();
+                    if (currentPlanContainer.style.display === 'block' && 
+                        outputExamName.textContent === studyPlans.find(p => p.id === planId)?.examName) {
+                        currentPlanContainer.style.display = 'none';
+                    }
+                }
+            }
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            }
+            function resetForm() {
+                examNameInput.value = '';
+                examDateInput.value = '';
+                studyTopicsInput.value = '';
+                subtopicsInput.value = '';
+                topicHoursInput.value = '2';
+                topicMinutesInput.value = '30';
+                subtopicHoursInput.value = '0';
+                subtopicMinutesInput.value = '45';
+            }
+            if (studyPlans.length > 0) {
+                displayStudyPlan(studyPlans[0]);
+                currentPlanContainer.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
